@@ -18,7 +18,7 @@ import struct
 import time
 from typing import Any, Optional
 
-# ─── Constants ────────────────────────────────────────────────────────
+# --- Constants --------------------------------------------------------
 PROTO_START = 0xAA
 PROTO_END   = 0xFF
 
@@ -36,12 +36,12 @@ TYPE_NAMES = {
     PROTO_TYPE_DICT:   "DICT",
 }
 
-# ─── Errors ───────────────────────────────────────────────────────────
+# --- Errors -----------------------------------------------------------
 class ProtocolChecksumError(Exception): pass
 class ProtocolFramingError(Exception):  pass
 class ProtocolLengthError(Exception):   pass
 
-# ─── Packet ───────────────────────────────────────────────────────────
+# --- Packet -----------------------------------------------------------
 class Packet:
     def __init__(self, type_: int, seq: int, payload: bytes):
         self.type    = type_
@@ -72,7 +72,7 @@ class Packet:
         return f"Packet(type={type_name}, seq={self.seq}, value={self.decoded_value()!r})"
 
 
-# ─── Array Decoding ───────────────────────────────────────────────────
+# --- Array Decoding ---------------------------------------------------
 # Payload: [element_type 1B] [count 1B] [elements...]
 def _decode_array(payload: bytes) -> list:
     if len(payload) < 2:
@@ -101,7 +101,7 @@ def _decode_array(payload: bytes) -> list:
     return result
 
 
-# ─── Dict Decoding ────────────────────────────────────────────────────
+# --- Dict Decoding ----------------------------------------------------
 # Payload: [count 1B] then for each entry:
 #   [key_len 1B] [key bytes] [value_type 1B] [value bytes]
 # Value bytes: 4B for INT/FLOAT, [str_len 1B][str bytes] for STRING
@@ -136,7 +136,7 @@ def _decode_dict(payload: bytes) -> dict:
     return result
 
 
-# ─── Protocol Class ───────────────────────────────────────────────────
+# --- Protocol Class ---------------------------------------------------
 class CustomProtocol:
     def __init__(self, port: str, baud_rate: int = 115200, timeout: float = 2.0):
         self.port      = port
@@ -158,7 +158,7 @@ class CustomProtocol:
     def cleanup(self):
         self.disconnect()
 
-    # ── Checksum ─────────────────────────────────────────────────────
+    # -- Checksum -----------------------------------------------------
     @staticmethod
     def _checksum(type_: int, seq: int, payload: bytes) -> int:
         csum = PROTO_START ^ type_ ^ seq ^ len(payload)
@@ -166,7 +166,7 @@ class CustomProtocol:
             csum ^= b
         return csum & 0xFF
 
-    # ── Send ─────────────────────────────────────────────────────────
+    # -- Send ---------------------------------------------------------
     def _build_packet(self, type_: int, payload: bytes) -> bytes:
         seq  = self._seq & 0xFF
         self._seq += 1
@@ -176,19 +176,19 @@ class CustomProtocol:
     def send(self, data: Any):
         """
         Send data. Accepts:
-          str        → STRING packet
-          int        → INT packet
-          float      → FLOAT packet
-          list[int]  → ARRAY packet
-          list[float]→ ARRAY packet
-          dict       → DICT packet (values must be str, int, or float)
+          str        -> STRING packet
+          int        -> INT packet
+          float      -> FLOAT packet
+          list[int]  -> ARRAY packet
+          list[float]-> ARRAY packet
+          dict       -> DICT packet (values must be str, int, or float)
         """
         if isinstance(data, str):
             payload = data.encode("utf-8")
             type_   = PROTO_TYPE_STRING
 
         elif isinstance(data, bool):
-            # bool is a subclass of int — handle explicitly
+            # bool is a subclass of int -- handle explicitly
             payload = struct.pack("<i", int(data))
             type_   = PROTO_TYPE_INT
 
@@ -243,7 +243,7 @@ class CustomProtocol:
                 raise TypeError(f"Dict value type not supported: {type(val)}")
         return buf
 
-    # ── Receive ──────────────────────────────────────────────────────
+    # -- Receive ------------------------------------------------------
     def receive(self) -> Packet:
         # Sync to START byte
         while True:
@@ -275,7 +275,7 @@ class CustomProtocol:
 
         return Packet(type_=type_, seq=seq, payload=payload)
 
-    # ── Context manager ───────────────────────────────────────────────
+    # -- Context manager -----------------------------------------------
     def __enter__(self):
         self.connect()
         return self
