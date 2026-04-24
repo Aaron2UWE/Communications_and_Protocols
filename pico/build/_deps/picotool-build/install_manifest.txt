@@ -1,7 +1,0 @@
-/Users/aaron/Documents/Communications_and_Protocols/pico/build/_deps/picotool/picotool
-/Users/aaron/Documents/Communications_and_Protocols/pico/build/_deps/picotool/picotoolTargets.cmake
-/Users/aaron/Documents/Communications_and_Protocols/pico/build/_deps/picotool/picotoolTargets-release.cmake
-/Users/aaron/Documents/Communications_and_Protocols/pico/build/_deps/picotool/picotoolConfig.cmake
-/Users/aaron/Documents/Communications_and_Protocols/pico/build/_deps/picotool/picotoolConfigVersion.cmake
-/Users/aaron/Documents/Communications_and_Protocols/pico/build/_deps/picotool/enc_bootloader.elf
-/Users/aaron/Documents/Communications_and_Protocols/pico/build/_deps/picotool/enc_bootloader_mbedtls.elf
