@@ -98,3 +98,9 @@ Expected output:
 | `FramingError` | Bad START/END byte | Logged, re-syncs to next `0xAA` |
 | `ChecksumError` | Corrupted byte | Logged, packet discarded |
 | `LengthError` | Timeout mid-packet | Logged, re-syncs |
+
+
+
+## Demonstration Link
+
+https://youtu.be/mTuooHEhC10
